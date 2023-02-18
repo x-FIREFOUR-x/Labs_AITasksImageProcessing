@@ -1,1 +1,1 @@
-# AI_ImageProcessing
+# Artificial intelligence in image processing tasks
