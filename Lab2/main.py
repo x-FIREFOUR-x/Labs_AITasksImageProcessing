@@ -23,32 +23,41 @@ def found_smile_eye_faces(path_image, scaling_factor):
     frame = cv2.imread(path_image)
     frame = cv2.resize(frame, None, fx=scaling_factor, fy=scaling_factor)
 
+    frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
     face_rects = face_cascade.detectMultiScale(frame, scaleFactor=1.3, minNeighbors=5)
     print(f"Found {len(face_rects)} faces")
 
     for (x, y, w, h) in face_rects:
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 4)
 
-        roi = frame[y:y+h, x:x+w]
-        smile = smile_cascade.detectMultiScale(roi)
-        eye = eye_cascade.detectMultiScale(roi)
+        roi_gray = frame_gray[y:y+h, x:x+w]
+        roi_color = frame[y:y+h, x:x+w]
+
+        smile = smile_cascade.detectMultiScale(roi_gray)
+        eye = eye_cascade.detectMultiScale(roi_gray)
 
         for (sx, sy, sw, sh) in smile:
-            cv2.rectangle(roi, (sx, sy), (sx + sw, sy + sh), (0, 255, 0), 1)
+            cv2.rectangle(roi_color, (sx, sy), (sx + sw, sy + sh), (0, 255, 0), 1)
         for (ex, ey, ew, eh) in eye:
-            cv2.rectangle(roi, (ex, ey), (ex + ew, ey + eh), (255, 0, 0), 1)
+            cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (255, 0, 0), 1)
 
     cv2.imshow("Image", frame)
     cv2.waitKey(0)
 
 def found_faces_video(path_video):
-    cv2.startWindowThread()
-
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-    cap = cv2.VideoCapture(path_video)
+
+    cv2.startWindowThread()
+    video = cv2.VideoCapture(path_video)
     while True:
-        ret, frame = cap.read()
-        faces = face_cascade.detectMultiScale(frame, scaleFactor=1.3, minNeighbors=5)
+        ret, frame = video.read()
+        if not ret:
+            break
+
+        frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        faces = face_cascade.detectMultiScale(frame_gray, scaleFactor=1.3, minNeighbors=5)
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 4)
 
@@ -56,7 +65,7 @@ def found_faces_video(path_video):
         if cv2.waitKey(1) & 0XFF==ord('q'):
             break
 
-    cap.release()
+    video.release()
     cv2.destroyAllWindows()
 
 def found_people(path_video):
@@ -66,11 +75,15 @@ def found_people(path_video):
     hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
     cv2.startWindowThread()
-    cap = cv2.VideoCapture(path_video)
+    video = cv2.VideoCapture(path_video)
     while True:
-        ret, frame = cap.read()
+        ret, frame = video.read()
+        if not ret:
+            break
 
-        faces = face_cascade.detectMultiScale(frame, scaleFactor=1.3, minNeighbors=5)
+        frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        faces = face_cascade.detectMultiScale(frame_gray, scaleFactor=1.3, minNeighbors=5)
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 4)
 
@@ -83,7 +96,7 @@ def found_people(path_video):
         if cv2.waitKey(1) & 0XFF == ord('q'):
             break
 
-    cap.release()
+    video.release()
     cv2.destroyAllWindows()
 
 
