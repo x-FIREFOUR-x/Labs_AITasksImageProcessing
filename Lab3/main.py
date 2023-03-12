@@ -99,6 +99,68 @@ def Task1():
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+
+def recognize_markings(img):
+        # Gray
+    grayImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        # Bluring Img
+    kernel_size = 5
+    blurImg = cv2.GaussianBlur(grayImg, (kernel_size, kernel_size), 0)
+
+        # Algorithm Kenny
+    low_t = 50
+    high_t = 150
+    edgesImg = cv2.Canny(blurImg, low_t, high_t)
+
+        # Mask
+    vertices = np.array(
+        [[(0, img.shape[0]), (450, 310), (490, 310), (img.shape[1], img.shape[0])]],
+        dtype=np.int32)
+    mask = np.zeros_like(edgesImg)
+    ignore_mask_color = 255
+    cv2.fillPoly(mask, vertices, ignore_mask_color)
+    maskedImg = cv2.bitwise_and(edgesImg, mask)
+
+        # Hafa
+    rho = 3
+    theta = np.pi / 180
+    threshold = 15
+    min_line_len = 150
+    max_line_gap = 60
+    lines = cv2.HoughLinesP(
+        maskedImg, rho, theta, threshold,
+        np.array([]),
+        minLineLength=min_line_len,
+        maxLineGap=max_line_gap
+    )
+
+    try:
+        draw_lines(img, lines)
+    except:
+        pass
+
+
+def Task2():
+    video_capture = cv2.VideoCapture("media/road.mp4")
+    while video_capture.isOpened():
+        ret, frame = video_capture.read()
+        if ret:
+            recognize_markings(frame)
+            cv2.imshow("video", frame)
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+        else:
+            break
+
+    video_capture.release()
+    cv2.destroyAllWindows()
+
+
 if __name__ == '__main__':
     Task1()
+    Task2()
+
 
