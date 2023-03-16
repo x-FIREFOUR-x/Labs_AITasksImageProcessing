@@ -44,3 +44,9 @@ def face_landmarks(image):
 def face_encodings(image):
     return [np.array(face_encoder.compute_face_descriptor(image, face_landmark))
             for face_landmark in face_landmarks(image)]
+
+
+def nb_of_matches(known_encodings, unknown_encoding):
+    distances = np.linalg.norm(known_encodings - unknown_encoding, axis=1)
+    small_distances = distances <= 0.6
+    return sum(small_distances)

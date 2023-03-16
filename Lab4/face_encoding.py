@@ -6,7 +6,7 @@ import pickle
 from utils import get_image_paths
 from utils import face_encodings
 
-root_dir = "dataset"
+root_dir = "data/dataset"
 class_names = os.listdir(root_dir)
 
 image_paths = get_image_paths(root_dir, class_names)
