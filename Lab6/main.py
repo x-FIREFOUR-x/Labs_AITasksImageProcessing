@@ -4,8 +4,16 @@ import matplotlib.pyplot as plt
 import os
 import time
 
+
 CLASS_NAMES = [
     'airplane', 'automobile', 'bird', 'deer', 'cat', 'dog', 'frog', 'horse', 'ship', 'truck']
+
+
+def process_images(image, label):
+    image = tf.image.per_image_standardization(image)
+    image = tf.image.resize(image, (227, 227))
+    return image , label
+
 
 if __name__ == '__main__':
     (train_images, train_labels), (test_images, test_labels) = keras.datasets.cifar10.load_data()
@@ -25,3 +33,10 @@ if __name__ == '__main__':
         plt.title(CLASS_NAMES[label.numpy()[0]])
         plt.axis('off')
     plt.show()
+
+    train_ds_size = tf.data.experimental.cardinality(train_ds).numpy()
+    test_ds_size = tf.data.experimental.cardinality(test_ds).numpy()
+    validation_ds_size = tf.data.experimental.cardinality(validation_ds).numpy()
+    print("Training data size: ", train_ds_size)
+    print("Test data size: ", test_ds_size)
+    print("Validation data size: ", validation_ds_size)
