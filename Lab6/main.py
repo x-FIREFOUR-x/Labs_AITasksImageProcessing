@@ -40,3 +40,16 @@ if __name__ == '__main__':
     print("Training data size: ", train_ds_size)
     print("Test data size: ", test_ds_size)
     print("Validation data size: ", validation_ds_size)
+
+    train_ds = (train_ds
+                      .map(process_images)
+                      .shuffle(buffer_size=train_ds_size)
+                      .batch(batch_size=32, drop_remainder=True))
+    test_ds = (test_ds
+                      .map(process_images)
+                      .shuffle(buffer_size=train_ds_size)
+                      .batch(batch_size=32, drop_remainder=True))
+    validation_ds = (validation_ds
+                      .map(process_images)
+                      .shuffle(buffer_size=train_ds_size)
+                      .batch(batch_size=32, drop_remainder=True))
