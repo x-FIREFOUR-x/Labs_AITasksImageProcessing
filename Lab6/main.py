@@ -85,3 +85,6 @@ if __name__ == '__main__':
         keras.layers.Dropout(0.5),
         keras.layers.Dense(10, activation='softmax')
     ])
+
+    run_logdir = "log_dir"
+    tensorboard_cb = keras.callbacks.TensorBoard(run_logdir)
