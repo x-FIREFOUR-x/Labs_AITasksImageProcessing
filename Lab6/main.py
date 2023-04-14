@@ -96,7 +96,7 @@ if __name__ == '__main__':
     model.summary()
 
     model.fit(train_ds,
-              epochs=1,
+              epochs=5,
               validation_data=validation_ds,
               validation_freq=1,
               callbacks=[tensorboard_cb])
