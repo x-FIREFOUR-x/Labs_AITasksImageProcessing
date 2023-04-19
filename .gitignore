@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 
 /Lab4/data/
+/Lab6/log_dir/
